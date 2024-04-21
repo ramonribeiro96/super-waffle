@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:14.3
+    container_name: db
+    hostname: db
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_USER=user_waffle
+      - POSTGRES_PASSWORD=password_waffle
+      - POSTGRES_DB=db_waffle
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/db/docker-entrypoint.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+      - ./docker/db/data:/var/lib/postgresql/data
+    networks:
+      - super-waffle
+
+  app:
+    container_name: app
+    hostname: app
+    restart: always
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    networks:
+      - super-waffle
+
+networks:
+  super-waffle:
+    name: super-waffle
+    driver: bridge
+    external: false
