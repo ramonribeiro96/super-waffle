@@ -12,7 +12,8 @@
   },
   "autoload": {
     "psr-4": {
-      "RamonRibeiro\\SuperWaffle\\": "src/"
+      "RamonRibeiro\\SuperWaffle\\": "src/",
+      "SuperWaffle\\Migrations\\": "database/migrations/"
     },
     "classmap": [
       "src/DAO"
