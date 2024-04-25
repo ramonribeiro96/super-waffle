@@ -1,9 +1,12 @@
 <?php
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 return [
-    'dbname' => 'db_waffle',
-    'user' => 'user_waffle',
-    'password' => 'password_waffle',
-    'host' => 'db',
+    'dbname' => $_ENV['DB_DATABASE'],
+    'user' => $_ENV['DB_USERNAME'],
+    'password' => $_ENV['DB_PASSWORD'],
+    'host' => $_ENV['DB_HOST'],
     'driver' => 'pdo_pgsql',
 ];
