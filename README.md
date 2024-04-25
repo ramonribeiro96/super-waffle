@@ -18,8 +18,8 @@ Instalando Dependências:
 
 Executando Migrations:
 
-`` docker compose exec -it app ./vendor/bin/doctrine-migrations migrations:execute --up --dry-run SuperWaffle\\Migrations\\Version20240421232509 ``
+`` docker compose exec -it app ./vendor/bin/doctrine-migrations migrations:execute --up SuperWaffle\\Migrations\\Version20240421232509 ``
 
 Executando Testes:
 
-`` docker exec app ./vendor/bin/phpunit --colors tests/PgConnectionTest.php ``
+`` docker exec -it app ./vendor/bin/phpunit ``
