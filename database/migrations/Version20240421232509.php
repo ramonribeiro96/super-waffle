@@ -30,11 +30,11 @@ final class Version20240421232509 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\PostgreSQLPlatform'."
         );
 
-        $this->addSql('CREATE TABLE product_taxes (id INTEGER NOT NULL, percent DECIMAL(2,2) NOT NULL, description VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE product_taxes (id INTEGER NOT NULL, percent NUMERIC(4,2) NOT NULL, description VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
 
         $this->addSql('CREATE TABLE products (
             id INTEGER NOT NULL, 
-            price DECIMAL(10,2) NOT NULL,
+            price NUMERIC(10,2) NOT NULL,
             product_taxes INTEGER REFERENCES product_taxes (id) ON DELETE CASCADE, 
             product_type INTEGER REFERENCES product_type (id) ON DELETE CASCADE, 
             description VARCHAR(255) NOT NULL, 
