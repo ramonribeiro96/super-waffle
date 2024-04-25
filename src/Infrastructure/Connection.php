@@ -5,15 +5,20 @@ namespace RamonRibeiro\SuperWaffle\Infrastructure;
 class Connection
 {
     private \PDO $connection;
+    private string $host;
+    private int $port;
+    private string $database;
+    private string $username;
+    private string $password;
 
-    public function __construct(
-        private string $host,
-        private int    $port,
-        private string $database,
-        private string $username,
-        private string $password,
-    )
+    public function __construct()
     {
+        $this->host = $_ENV['DB_HOST'];
+        $this->port = $_ENV['DB_PORT'];
+        $this->database = $_ENV['DB_DATABASE'];
+        $this->username = $_ENV['DB_USERNAME'];
+        $this->password = $_ENV['DB_PASSWORD'];
+
         $this->connect();
     }
 
@@ -30,9 +35,4 @@ class Connection
             throw new \PDOException($e->getMessage());
         }
     }
-
-//    public function close(): void
-//    {
-//        pg_close($this->connection);
-//    }
 }
