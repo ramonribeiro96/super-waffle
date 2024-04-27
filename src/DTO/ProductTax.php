@@ -6,13 +6,13 @@ readonly class ProductTax
 {
     private function __construct(
         private ?int   $id,
-        private ?float  $percent,
-        private ?string $description
+        private float  $percent,
+        private string $description
     )
     {
     }
 
-    public static function create(?int $id, ?float $percent, ?string $description): self
+    public static function create(?int $id, float $percent, string $description): self
     {
         return new self($id, $percent, $description);
     }

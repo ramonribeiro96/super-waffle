@@ -11,7 +11,7 @@ readonly class ProductType
     {
     }
 
-    public static function create(?int $id, ?string $description): self
+    public static function create(?int $id, string $description): self
     {
         return new self($id, $description);
     }
