@@ -76,4 +76,17 @@ class ProductTax implements ProductTaxRepository
 
         return true;
     }
+
+    public function getById(int $id): ProductTaxEntity
+    {
+        $connection = new Connection();
+
+        $statement = $connection->getConnection()->query('SELECT id, percent, description FROM db_waffle.public.product_taxes where id = :id');
+        $statement->bindValue(':id', $id, \PDO::PARAM_INT);
+        $statement->execute();
+
+        $product = new ProductTaxEntity(...$statement->fetch(\PDO::FETCH_ASSOC));
+
+        return $product;
+    }
 }

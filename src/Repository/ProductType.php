@@ -18,4 +18,5 @@ interface ProductType
 
     public function delete(ProductTypeDTO $productTypeDTO): bool;
 
+    public function getById(int $id): ProductTypeEntity;
 }

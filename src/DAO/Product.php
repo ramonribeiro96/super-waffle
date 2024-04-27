@@ -88,4 +88,27 @@ class Product implements ProductRepository
 
         return true;
     }
+
+    public function getById(int $id): ProductEntity
+    {
+        $connection = new Connection();
+
+        $statement = $connection->getConnection()->query('SELECT id, price, description, product_taxes, product_type FROM db_waffle.public.products where id = :id');
+        $statement->bindValue(':id', $id, \PDO::PARAM_INT);
+        $statement->execute();
+
+        $productEntity = null;
+
+        foreach ($statement->fetch(\PDO::FETCH_ASSOC) as $product) {
+            $productEntity = new ProductEntity(
+                id: $product['id'],
+                price: $product['price'],
+                description: $product['description'],
+                productTax: $product['product_taxes'],
+                productType: $product['product_type']
+            );
+        }
+
+        return $productEntity;
+    }
 }

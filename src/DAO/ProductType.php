@@ -72,4 +72,17 @@ class ProductType implements ProductTypeRepository
 
         return true;
     }
+
+    public function getById(int $id): ProductTypeEntity
+    {
+        $connection = new Connection();
+
+        $statement = $connection->getConnection()->prepare('SELECT id, description FROM db_waffle.public.product_type WHERE id = :id');
+        $statement->bindValue(':id', $id, \PDO::PARAM_INT);
+        $statement->execute();
+
+        $product = new ProductTypeEntity(...$statement->fetch(\PDO::FETCH_ASSOC));
+
+        return $product;
+    }
 }

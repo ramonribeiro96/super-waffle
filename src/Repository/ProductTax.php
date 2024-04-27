@@ -18,4 +18,5 @@ interface ProductTax
 
     public function delete(ProductTaxDTO $productTaxDTO): bool;
 
+    public function getById(int $id): ProductTaxEntity;
 }
