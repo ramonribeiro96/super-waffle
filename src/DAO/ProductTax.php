@@ -91,7 +91,7 @@ class ProductTax implements ProductTaxRepository
     {
         $connection = new Connection();
 
-        $statement = $connection->getConnection()->query('SELECT id, percent, description FROM db_waffle.public.product_taxes where id = :id');
+        $statement = $connection->getConnection()->prepare('SELECT id, percent, description FROM db_waffle.public.product_taxes where id = :id');
         $statement->bindValue(':id', $id, \PDO::PARAM_INT);
         $statement->execute();
 

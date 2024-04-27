@@ -109,7 +109,7 @@ class Product implements ProductRepository
     {
         $connection = new Connection();
 
-        $statement = $connection->getConnection()->query('SELECT id, price, description, product_taxes, product_type FROM db_waffle.public.products where id = :id');
+        $statement = $connection->getConnection()->prepare('SELECT id, price, description, product_taxes, product_type FROM db_waffle.public.products where id = :id');
         $statement->bindValue(':id', $id, \PDO::PARAM_INT);
         $statement->execute();
 
