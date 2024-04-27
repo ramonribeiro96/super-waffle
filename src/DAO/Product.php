@@ -113,17 +113,15 @@ class Product implements ProductRepository
         $statement->bindValue(':id', $id, \PDO::PARAM_INT);
         $statement->execute();
 
-        $productEntity = null;
+        $product = $statement->fetch(\PDO::FETCH_ASSOC);
 
-        foreach ($statement->fetch(\PDO::FETCH_ASSOC) as $product) {
-            $productEntity = new ProductEntity(
-                id: $product['id'],
-                price: $product['price'],
-                description: $product['description'],
-                productTax: $product['product_taxes'],
-                productType: $product['product_type']
-            );
-        }
+        $productEntity = new ProductEntity(
+            id: $product['id'],
+            price: $product['price'],
+            description: $product['description'],
+            productTax: $product['product_taxes'],
+            productType: $product['product_type']
+        );
 
         return $productEntity;
     }
