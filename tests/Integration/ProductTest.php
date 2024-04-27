@@ -23,8 +23,10 @@ class ProductTest extends TestCase
         $productTypeDAO = new ProductTypeDAO();
         $productType = $productTypeDAO->save($productTypeDTO); //Persist
 
-        $this->assertInstanceOf(\RamonRibeiro\SuperWaffle\Entity\ProductType::class, $productType);
-        $this->assertEquals($productTypeDTO->getDescription(), $productType->getDescription());
+        $productTypeGetById = $productTypeDAO->getById($productTypeDTO->getId());
+
+        $this->assertInstanceOf(\RamonRibeiro\SuperWaffle\Entity\ProductType::class, $productType, 'Deve ser um Product Entity.');
+        $this->assertEquals($productTypeDTO->getDescription(), $productTypeGetById->getDescription(), 'Deve conter a mesma "description" que o DTO.');
     }
 
     /**
@@ -37,9 +39,11 @@ class ProductTest extends TestCase
         $productTaxDAO = new ProductTaxDAO();
         $productTax = $productTaxDAO->save($productTaxDTO); //Persist
 
-        $this->assertInstanceOf(\RamonRibeiro\SuperWaffle\Entity\ProductTax::class, $productTax);
-        $this->assertEquals($productTaxDTO->getPercent(), $productTax->getPercent());
-        $this->assertEquals($productTaxDTO->getDescription(), $productTax->getDescription());
+        $productTaxGetById = $productTaxDAO->getById($productTaxDTO->getId());
+
+        $this->assertInstanceOf(\RamonRibeiro\SuperWaffle\Entity\ProductTax::class, $productTax, 'Deve ser um ProductTax Entity.');
+        $this->assertEquals($productTaxDTO->getPercent(), $productTaxGetById->getPercent(), 'Deve conter o mesmo "percent" que o DTO.');
+        $this->assertEquals($productTaxDTO->getDescription(), $productTaxGetById->getDescription(), 'Deve conter a mesma "description" que o DTO.');
     }
 
     /**
@@ -58,7 +62,11 @@ class ProductTest extends TestCase
         $productDAO = new ProductDAO();
         $product = $productDAO->save($productDTO); //Persist
 
+        $productTaxGetById = $productDAO->getById($productDTO->getId());
+
         $this->assertInstanceOf(\RamonRibeiro\SuperWaffle\Entity\Product::class, $product);
+        $this->assertEquals($productDTO->getPrice(), $productTaxGetById->getPrice(), 'Deve conter o mesmo "price" que o DTO.');
+        $this->assertEquals($productDTO->getDescription(), $productTaxGetById->getDescription(), 'Deve conter a mesma "description" que o DTO.');
     }
 
     /**
