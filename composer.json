@@ -27,5 +27,11 @@
       "name": "Ramon Ribeiro",
       "email": "ramongnr2009@hotmail.com"
     }
-  ]
+  ],
+  "scripts": {
+    "pre-install-cmd": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+      "@php -r \"file_exists('.env.test') || copy('.env.example', '.env.test');\""
+    ]
+  }
 }
