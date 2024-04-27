@@ -11,7 +11,17 @@ class ProductTax implements ProductTaxRepository
 {
     public function list(): array
     {
-        // TODO: Implement list() method.
+        $connection = new Connection();
+
+        $statement = $connection->getConnection()->query('SELECT id, percent, description FROM db_waffle.public.product_taxes', \PDO::FETCH_ASSOC);
+
+        $productTaxes = [];
+
+        foreach ($statement->getIterator() as $key => $productTax) {
+            $productTaxes[$key] = new ProductTaxEntity(...$productTax);
+        }
+
+        return $productTaxes;
     }
 
     public function save(ProductTaxDTO $productTaxDTO): ProductTaxEntity

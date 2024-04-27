@@ -14,7 +14,23 @@ class Product implements ProductRepository
      */
     public function list(): array
     {
-        // TODO: Implement list() method.
+        $connection = new Connection();
+
+        $statement = $connection->getConnection()->query('SELECT * FROM db_waffle.public.products');
+
+        $products = [];
+
+        foreach ($statement->getIterator() as $key => $product) {
+            $products[$key] = new ProductEntity(
+                id: $product['id'],
+                price: $product['price'],
+                description: $product['description'],
+                productTax: $product['product_taxes'],
+                productType: $product['product_type']
+            );
+        }
+
+        return $products;
     }
 
     public function save(ProductDTO $productDTO): ProductEntity

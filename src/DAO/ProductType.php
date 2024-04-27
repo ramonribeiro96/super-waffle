@@ -9,9 +9,22 @@ use RamonRibeiro\SuperWaffle\Repository\ProductType as ProductTypeRepository;
 
 class ProductType implements ProductTypeRepository
 {
+    /**
+     * @return ProductTypeEntity[]
+     */
     public function list(): array
     {
-        // TODO: Implement list() method.
+        $connection = new Connection();
+
+        $statement = $connection->getConnection()->query('SELECT id, description FROM db_waffle.public.product_type', \PDO::FETCH_ASSOC);
+
+        $productTypes = [];
+
+        foreach ($statement->getIterator() as $key => $productType) {
+            $productTypes[$key] = new ProductTypeEntity(...$productType);
+        }
+
+        return $productTypes;
     }
 
     public function save(ProductTypeDTO $productTypeDTO): ProductTypeEntity
