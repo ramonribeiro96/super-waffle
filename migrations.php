@@ -11,5 +11,6 @@ return [
 
     'migrations' => [
         'SuperWaffle\Migrations\Version20240421232509',
+        'SuperWaffle\Migrations\Version20240501125312',
     ],
 ];
