@@ -117,6 +117,7 @@ class ProductTest extends TestCase
 
         $this->assertInstanceOf(\RamonRibeiro\SuperWaffle\Entity\Product::class, $productUpdated, 'Deve ser uma Product Entity.');
         $this->assertStringContainsString('UPDATE', $productUpdated->getDescription(), 'Deve conter "UPDATE" na descrição.');
+        $this->assertEquals($price, $productUpdated->getPrice(), 'Deve conter o preço atualizado.');
     }
 
     public function testListProductType()
@@ -145,16 +146,24 @@ class ProductTest extends TestCase
 
     /**
      * @dataProvider buyProductsProvider
+     * @depends testUpdateProduct
      */
-    public function testCheckoutProducts($idCheckout, $idProduct, $idProductType, $idProductTax, $amountProduct, $totalProduct, $totalTax, $total)
+    public function testCheckoutProducts($idCheckout, $idProduct, $idProductType, $idProductTax, $amountProduct, $totalProduct, $totalTax, $totalWithTaxes)
     {
         $checkoutDTO = Checkout::create(id: $idCheckout, product: $idProduct, amount: $amountProduct, productType: $idProductType, productTax: $idProductTax);
 
         $checkoutDAO = new CheckoutDAO();
         $checkoutEntity = $checkoutDAO->save($checkoutDTO);
 
-        //@todo calcular taxas das compras
+        $calcAmount = $checkoutEntity->getAmount();
+        $calcTotalProduct = ($checkoutEntity->getProductPrice() * $calcAmount);
+        $calcTotalTax = $calcTotalProduct * ($checkoutEntity->getTaxPercent() / 100);
+        $calcTotalWithTaxes = $calcTotalTax + $calcTotalProduct;
+
         $this->assertInstanceOf(\RamonRibeiro\SuperWaffle\Entity\Checkout::class, $checkoutEntity, 'Deve ser um Checkout Entity.');
+        $this->assertEquals($totalProduct, $calcTotalProduct, 'O valor total do produto deve ser igual.');
+        $this->assertEquals($totalTax, $calcTotalTax, 'O valor das taxas do produto devem ser iguais.');
+        $this->assertEquals($totalWithTaxes, $calcTotalWithTaxes, 'O valor total do produto com as taxas devem ser iguais.');
     }
 
     public function testListCheckouts()
@@ -280,14 +289,14 @@ class ProductTest extends TestCase
     {
         return [
             'COMPRA COPO AMERICANO' => [1, 1, 1, 1, $amount = 4, $totalProduct = (2.30 * $amount), $totalTax = $totalProduct * (5.00 / 100), $totalTax + $totalProduct], // (2.30 * 4) = 9,20 | 9,20 * (5.00 / 100) = 0,46 | 9,20 + 0,46 = 9.66
-            'COMPRA TIGELA PORCELANA' => [2, 1, 1, 1, $amount = 2, $totalProduct = (5.20 * $amount), $totalTax = $totalProduct * (5.00 / 100), $totalTax + $totalProduct], //(5.20 * 2) = 10,40 | 10,40 * (5.00 / 100) = 0,52 | 10,40 + 0,52 = 10,92
-            'COMPRA CANECA PERSONALIZADA' => [3, 1, 1, 1, $amount = 1, $totalProduct = (10.00 * $amount), $totalTax = $totalProduct * (5.00 / 100), $totalTax + $totalProduct], // (10.00 * 1) = 10,00 | 10,00 * (5.00 / 100) = 0,50 | 10,00 + 0,50 = 10,50
-            'COMPRA LARANJA LIMA' => [4, 2, 2, 2, $amount = 10, $totalProduct = (2.30 * $amount), $totalTax = $totalProduct * (7.00 / 100), $totalTax + $totalProduct], // (2.30 * 10) = 23,00 | 23,00 * (7.00 / 100) = 1,61 | 23,00 + 1,61 = 24,61
-            'COMPRA CAJU' => [5, 2, 2, 2, $amount = 5, $totalProduct = (9.90 * $amount), $totalTax = $totalProduct * (7.00 / 100), $totalTax + $totalProduct], // (9.90 * 5) = 49,50 | 49,50 * (7.00 / 100) = 3,47 | 49,50 + 3,47 = 52,97
-            'COMPRA PÊRA' => [6, 2, 2, 2, $amount = 7, $totalProduct = (16.90 * $amount), $totalTax = $totalProduct * (7.00 / 100), $totalTax + $totalProduct], // (16.90 * 7) = 118,3 | 118,3 * (7.00 / 100) = 8,28 | 118,3 + 8,28 = 126,58
-            'COMPRA BOLACHA BAUDUCCO' => [7, 3, 3, 3, $amount = 3, $totalProduct = (7.30 * $amount), $totalTax = $totalProduct * (10.00 / 100), $totalTax + $totalProduct], // (7.30 * 3) = 21,90 | 21,90 * (10.00 / 100) = 2,19 | 21,90 + 2,19 = 24,09
-            'COMPRA BISCOITO GLOBO' => [8, 3, 3, 3, $amount = 2, $totalProduct = (9.90 * $amount), $totalTax = $totalProduct * (10.00 / 100), $totalTax + $totalProduct], // (9.90 * 2) = 19,80 | 19,80 * (10.00 / 100) = 1,98 | 19,80 + 1,98 = 21,78
-            'COMPRA OREO' => [9, 3, 3, 3, $amount = 5, $totalProduct = (7.90 * $amount), $totalTax = $totalProduct * (10.00 / 100), $totalTax + $totalProduct], // (7.90 * 5) = 39,50 | 39,50 * (10.00 / 100) = 3,95 | 39,50 + 3,95 = 43,45
+            'COMPRA TIGELA PORCELANA' => [2, 2, 1, 1, $amount = 2, $totalProduct = (5.20 * $amount), $totalTax = $totalProduct * (5.00 / 100), $totalTax + $totalProduct], //(5.20 * 2) = 10,40 | 10,40 * (5.00 / 100) = 0,52 | 10,40 + 0,52 = 10,92
+            'COMPRA CANECA PERSONALIZADA' => [3, 3, 1, 1, $amount = 1, $totalProduct = (10.00 * $amount), $totalTax = $totalProduct * (5.00 / 100), $totalTax + $totalProduct], // (10.00 * 1) = 10,00 | 10,00 * (5.00 / 100) = 0,50 | 10,00 + 0,50 = 10,50
+            'COMPRA LARANJA LIMA' => [4, 4, 2, 2, $amount = 10, $totalProduct = (2.30 * $amount), $totalTax = $totalProduct * (7.00 / 100), $totalTax + $totalProduct], // (2.30 * 10) = 23,00 | 23,00 * (7.00 / 100) = 1,61 | 23,00 + 1,61 = 24,61
+            'COMPRA CAJU' => [5, 5, 2, 2, $amount = 5, $totalProduct = (9.90 * $amount), $totalTax = $totalProduct * (7.00 / 100), $totalTax + $totalProduct], // (9.90 * 5) = 49,50 | 49,50 * (7.00 / 100) = 3,47 | 49,50 + 3,47 = 52,97
+            'COMPRA PÊRA' => [6, 6, 2, 2, $amount = 7, $totalProduct = (16.90 * $amount), $totalTax = $totalProduct * (7.00 / 100), $totalTax + $totalProduct], // (16.90 * 7) = 118,3 | 118,3 * (7.00 / 100) = 8,28 | 118,3 + 8,28 = 126,58
+            'COMPRA BOLACHA BAUDUCCO' => [7, 7, 3, 3, $amount = 3, $totalProduct = (7.30 * $amount), $totalTax = $totalProduct * (10.00 / 100), $totalTax + $totalProduct], // (7.30 * 3) = 21,90 | 21,90 * (10.00 / 100) = 2,19 | 21,90 + 2,19 = 24,09
+            'COMPRA BISCOITO GLOBO' => [8, 8, 3, 3, $amount = 2, $totalProduct = (9.90 * $amount), $totalTax = $totalProduct * (10.00 / 100), $totalTax + $totalProduct], // (9.90 * 2) = 19,80 | 19,80 * (10.00 / 100) = 1,98 | 19,80 + 1,98 = 21,78
+            'COMPRA OREO' => [9, 9, 3, 3, $amount = 5, $totalProduct = (7.90 * $amount), $totalTax = $totalProduct * (10.00 / 100), $totalTax + $totalProduct], // (7.90 * 5) = 39,50 | 39,50 * (10.00 / 100) = 3,95 | 39,50 + 3,95 = 43,45
         ];
     }
 }
